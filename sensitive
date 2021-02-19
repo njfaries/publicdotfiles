@@ -1,0 +1,24 @@
+# gitignored file for sensitive/configurable info
+
+# Local keys
+export LOCAL_API_KEY=YOUR_LOCAL_API_KEY
+export LOCAL_SIGNING_SECRET=YOUR_LOCAL_SIGNING_SECRET
+export LOCAL_PUBLISHABLE_KEY=YOUR_LOCAL_PUBLISHABLE_KEY
+export LOCAL_BACKOFFICE_KEY=YOUR_LOCAL_BACKOFFICE_KEY #if you don't have backoffice leave this as is
+
+# Edit these to be your local URLs
+export LOCAL_API=https://api.YOURNAME.dev.bolt.me/
+export LOCAL_MERCHANT=https://merchant.YOURNAME.dev.bolt.me/
+export LOCAL_CDN=https://connect.YOURNAME.dev.bolt.me
+
+# Sandbox keys
+export SANDBOX_API_KEY=YOUR_SANDBOX_API_KEY
+export SANDBOX_SIGNING_SECRET=YOUR_SANDBOX_SIGNING_SECRET
+export SANDBOX_PUBLISHABLE_KEY=YOUR_SANDBOX_PUBLISHABLE_KEY
+export SANDBOX_BACKOFFICE_KEY=YOUR_SANDBOX_BACKOFFICE_KEY #if you don't have backoffice leave this as is
+
+# Sandbox URLS
+# Shouldn't need to change
+export SANDBOX_API=https://api-sandbox.bolt.com/
+export SANDBOX_MERCHANT=https://merchant-sandbox.bolt.com/
+export SANDBOX_CDN=https://connect-sandbox.bolt.com
