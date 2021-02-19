@@ -22,3 +22,5 @@ export SANDBOX_BACKOFFICE_KEY=YOUR_SANDBOX_BACKOFFICE_KEY #if you don't have bac
 export SANDBOX_API=https://api-sandbox.bolt.com/
 export SANDBOX_MERCHANT=https://merchant-sandbox.bolt.com/
 export SANDBOX_CDN=https://connect-sandbox.bolt.com
+
+# Add any variables that should not be in a repo here. Things like browserstack password and the like...
