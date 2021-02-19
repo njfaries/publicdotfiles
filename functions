@@ -1,0 +1,66 @@
+# Functions for bashrc and bash_profile
+# Behold my laziness
+
+# Git branch for prompt
+parse_git_branch()
+{
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+# Restart an application $1
+restart()
+{
+    pkill $1 && open -a $1
+}
+
+# Run ls and pipe output to grep
+f()
+{
+    ls | grep $1
+}
+
+# Run history and pipe output to grep
+h()
+{
+    history | grep $1
+}
+
+# Docker exec bash
+ds()
+{
+    docker exec -it $1 bash
+}
+
+# Add all changed files to git unless path specified
+function ga()
+{
+    if [[ $# -eq 0 ]]; then
+        git add *
+    else
+        git add $1
+    fi
+
+    git status
+}
+
+# Needs to be run periodically. If your M2 store is giving you sql errors about
+# password problems this will probably fix it.
+function fixMysql()
+{
+    sudo service mysql stop
+    sudo mkdir -p /var/run/mysqld
+    sudo chown mysql:mysql /var/run/mysqld
+    sudo mysqld_safe --skip-grant-tables >/tmp/mysqlreset 2>&1 &
+    sleep 5
+    sudo mysql mysql -e "update user set authentication_string=PASSWORD('') where user='root';"
+    sudo killall mysqld
+    sudo service mysql start
+    sleep 5
+    sudo mysql mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY ''";
+}
+
+# Starts your ngrok. Not parameterized
+function startup()
+{
+    screen -S ngrok -d -m bash -c 'ngrok start m2'
+}

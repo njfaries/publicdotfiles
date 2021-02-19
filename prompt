@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Copying Chris Grossack's prompt file almost entirely
+
+function git_prompt()
+{
+    
+    #ansi codes for which colour to use when
+    local up_to_date=36
+    local untracked=33
+    local modified=35
+
+    local git_status="`git status -unormal 2>&1`"
+    if ! [[ "$git_status" =~ not\ a\ git\ repo ]]; then
+        
+        if [[ "$git_status" =~ nothing\ to\ commit ]]; then
+            local text_colour="$up_to_date"
+        elif [[ "$git_status" =~ nothing\ added\ to\ commit\ but\ untracked\ files\ present ]]; then
+            local text_colour="$untracked"
+        else 
+            local text_colour="$modified"
+        fi
+
+        # See if we're on master or not
+        if [[ "$git_status" =~ On\ branch\ ([^[:space:]]+) ]]; then
+            branch=${BASH_REMATCH[1]}
+            test "$branch" != master || branch='master'
+        else
+            # if we have a detatched head, just say HEAD
+            branch="(`git describe --all --contains --abbrev=4 HEAD 2> /dev/null || echo HEAD`)"
+        fi
+
+        echo -n '\[\033['"$text_colour"'m\]'"$branch"'\[\033[0m\] '
+    fi
+}
+
+PROMPT="\[\033[32m\]\W\[\033[00m\]:~$ "
+
+function prompt_command()
+{
+    PS1="\[\033[45m\]ec2 devbox\[\033[49m\] `git_prompt`"$PROMPT
+}
+
+# Toggle PS1 fancy stuff
+
+function ps1_on { export PROMPT_COMMAND=prompt_command; }
+function ps1_off { export PROMPT_COMMAND=""; export PS1=$PROPT; }
+
+# On by default
+ps1_on
+
+#bind "set completion-ignore-case on"
+#bind "set show-all-if-ambiguous on"

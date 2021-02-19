@@ -1,0 +1,117 @@
+# Functions for Magento 2
+# Behold my laziness
+
+# Make sure to configure this if needed
+export M2ROOT=/var/code/magento
+
+# where all the variables are configured. Important for the toggle method
+if [[ -e $DOTFILES/sensitive ]]; then
+    source $DOTFILES/sensitive
+fi
+
+######## MAGENTO2 SCRIPTS #######
+
+# Runs M2 unit tests. Optionally provide path to specific test file
+# you want to run, using the Unit folder as root.
+function m2test()
+{
+    cd $M2ROOT
+
+    if [[ $# -eq 0 ]]; then
+        php vendor/bin/phpunit -c dev/tests/unit/bolt_phpunit.xml #--coverage-html ~/coverage_html/
+    else
+        testvar="app/code/Bolt/Boltpay/Test/Unit/${1}"
+        php vendor/phpunit/phpunit/phpunit --verbose -c dev/tests/unit/bolt_phpunit.xml $testvar
+    fi
+    
+    cd -
+}
+
+# Runs M2 upgrade step from anywhere
+function upgrade()
+{
+    cd $M2ROOT
+    php bin/magento setup:upgrade
+    cd -
+}
+
+# Clears and flushes M2 cache from anywhere
+function cache()
+{
+    cd $M2ROOT
+    php bin/magento c:c
+    php bin/magento c:f
+    cd -
+}
+
+# Runs M2 compile step from anywhere. Includes cache clear/flush and ownership
+# fix as those will always be necessary with a recompile
+function di()
+{
+    cd $M2ROOT
+    php bin/magento setup:di:compile
+    php bin/magento c:c
+    php bin/magento c:f
+    sudo chown -R www-data:www-data *
+    cd -
+}
+
+# Fixes ownership problem of files
+function own()
+{
+    cd $M2ROOT
+    sudo chown -R www-data:www-data *
+    cd -
+}
+
+# Does all M2 rebuilding steps
+function rebuild()
+{
+    cd $M2ROOT
+    php bin/magento setup:upgrade
+    php bin/magento setup:di:compile
+    php bin/magento c:c
+    php bin/magento c:f
+    sudo chown -R www-data:www-data *
+    cd -
+}
+
+# Switches your M2 box between pointing at your local hail/storm to the bolt sandbox and vice versa
+# Depends on variables in sensitive. If those are not set this *will* break your store.
+function toggle()
+{
+    cd $M2ROOT
+
+    current=$(php bin/magento config:show payment/boltpay/custom_api)
+
+    if [[ $current == *"bolt.com"* ]]; then
+        # switch to local
+        echo "Switching to local"
+        php bin/magento config:set payment/boltpay/custom_api $LOCAL_API
+        php bin/magento config:set payment/boltpay/custom_merchant_dash $LOCAL_MERCHANT
+        php bin/magento config:set payment/boltpay/custom_cdn $LOCAL_CDN
+        php bin/magento config:set payment/boltpay/api_key $LOCAL_API_KEY
+        php bin/magento config:set payment/boltpay/signing_secret $LOCAL_SIGNING_SECRET
+        php bin/magento config:set payment/boltpay/publishable_key_checkout $LOCAL_PUBLISHABLE_KEY
+        # backoffice not always part of a test merchant. YOUR is part of the default template name
+        if [[ $LOCAL_BACKOFFICE_KEY != *"YOUR"* ]]; then
+            php bin/magento config:set payment/boltpay/publishable_key_backoffice $LOCAL_BACKOFFICE_KEY
+        fi
+    else
+        # switch to sandbox
+        echo "Switching to sandbox"
+        php bin/magento config:set payment/boltpay/custom_api $SANDBOX_API
+        php bin/magento config:set payment/boltpay/custom_merchant_dash $SANDBOX_MERCHANT
+        php bin/magento config:set payment/boltpay/custom_cdn $SANDBOX_CDN
+        php bin/magento config:set payment/boltpay/api_key $SANDBOX_API_KEY
+        php bin/magento config:set payment/boltpay/signing_secret $SANDBOX_SIGNING_SECRET
+        php bin/magento config:set payment/boltpay/publishable_key_checkout $SANDBOX_PUBLISHABLE_KEY
+        # same as above
+        if [[ $SANDBOX_BACKOFFICE_KEY != *"YOUR"* ]]; then
+            echo "setting backoffice..."
+            php bin/magento config:set payment/boltpay/publishable_key_backoffice $SANDBOX_BACKOFFICE_KEY
+        fi
+    fi
+
+    cd -
+}

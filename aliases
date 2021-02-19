@@ -1,0 +1,43 @@
+# Aliases
+
+# Remove all existing aliases
+unalias -a
+
+# cd to important places from anywhere
+alias cdd='cd ~/.dotfiles'
+alias m2l='cd /var/code/magento'
+alias m2g='cd /var/code/magento/app/code/Bolt/Boltpay'
+alias erl='cd /var/log/apache2/'
+alias ini='cd /etc/php/7.2/cli/'
+
+# Edit .bashrc from anywhere
+alias ubp='vim ~/.bashrc'
+
+# Refresh .bashrc
+alias sbp='clear && source ~/.bashrc'
+
+# Various LS aliases
+alias ll='ls -CFh --color'
+alias ls='ls -laFh --color'
+alias lt='ls -laFht --color'
+alias lT='ls -laFhtr --color'
+#alias ls='ls -la'
+
+# Also extreme laziness
+alias g='git'
+alias v='vim'
+alias d='docker'
+
+# Git laziness
+alias gc='git commit -m'
+alias gp='git push'
+alias gl='git pull'
+alias gs='git status'
+
+# This was in the bash_profile originally so I'm keeping it. Dunno if I'll use it
+alias gsync='git fetch origin && get rebase origin/master'
+
+# Fun stuff
+alias please='sudo'
+alias plz='sudo "$BASH" -c "$(history -p !!)"'
+alias clera='sl'
