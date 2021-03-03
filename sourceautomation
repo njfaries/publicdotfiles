@@ -1,0 +1,26 @@
+export SOURCEROOT=YOUR_SOURCE_ROOT_HERE
+
+function checkdb()
+{
+    cd $SOURCEROOT/hail
+    migrate -database postgres://localhost:5432/api_development?sslmode=disable -path services/api/migrations version
+    cd -
+}
+
+function migrateup()
+{
+    cd $SOURCEROOT/hail
+
+    if [[ $# -eq 0 ]]; then
+        make devdb-migrate-up
+    else
+        if [[ $1 == "dev" ]]; then
+            make devdb-migrate-up
+        elif [[ $1 == "test" ]]; then
+            make testdb-migrate-up
+        else
+            echo "Bad parameter. Exiting"
+        fi
+    fi
+    cd -
+}
