@@ -1,6 +1,11 @@
+#!bin/bash
 # Run this script to set up the necessary symlinks after cloning
 
 cd ~
+
+if [ ! -e .dotfiles/ ]; then
+	mv publicdotfiles .dotfiles
+fi
 
 echo "Removing .bashrc"
 rm .bashrc
