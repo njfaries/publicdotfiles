@@ -1,4 +1,4 @@
-#!bin/bash
+!#bin/bash
 # Run this script to set up the necessary symlinks after cloning
 
 cd ~
