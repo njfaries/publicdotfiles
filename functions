@@ -45,54 +45,9 @@ ng()
     cd -
 }
 
-# Rsync magento files for docker container
-# Leaving docker container as a parameter even though it's probably always the same
-dockrsync()
+function startup()
 {
-    docker exec -it $1 rsync -avh --exclude 'vendor' project/ magento/app/code/Bolt/Boltpay --delete
-}
-
-# Specifically m2_php
-m2phpsync()
-{
-    dockrsync m2_php
-}
-
-# Update m2 local...lite
-# This can be used for things that don't require re-compilation.
-# TODO: Parameter flag this instead
-m2u()
-{
-    cd /Applications/MAMP/htdocs/magento2
-    composer update boltpay/bolt-magento2
-    php bin/magento cache:clean
-    php bin/magento cache:flush
-    cd -
-}
-
-# Update m2 local
-m2update()
-{
-    cd /Applications/MAMP/htdocs/magento2
-
-    echo "Update composer..."
-    composer update boltpay/bolt-magento2 
-
-    echo "setup:upgrade..."
-    php bin/magento setup:upgrade 
-
-    echo "setup:di:compile..."
-    php bin/magento setup:di:compile 
-
-    echo "setup:static-content:deploy -f..."
-    php bin/magento setup:static-content:deploy -f 
-
-    echo "cache:clean..."
-    php bin/magento cache:clean 
-
-    echo "cache:flush..."
-    php bin/magento cache:flush 
-    cd -
+    screen -S ngrok -d -m bash -c 'ngrok start m2'
 }
 
 # Add all changed files to git unless path specified
