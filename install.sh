@@ -23,4 +23,3 @@ rm .vimrc
 echo "Setting up symlink to .vimrc"
 ln -s .dotfiles/vimrc .vimrc
 
-source .dotfiles/.bashrc
